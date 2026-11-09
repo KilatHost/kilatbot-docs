@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KilatBot — MCP quickstart &amp; docs hub</title>
+<style>
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;max-width:720px;margin:40px auto;padding:0 20px;line-height:1.6;color:#1a1a1a}
+code{background:#f2f2f2;padding:2px 5px;border-radius:4px}
+pre{background:#f6f6f6;padding:14px;border-radius:8px;overflow-x:auto}
+pre code{background:none;padding:0}
+h1{font-size:28px}h2{font-size:20px;margin-top:36px}
+a{color:#0b5fff}
+footer{margin-top:48px;font-size:14px;color:#555}
+</style>
+</head>
+<body>
+<h1>KilatBot — AI agents you shape to your business</h1>
+<p>KilatBot is a workspace of private AI agents for Indonesian businesses. A business picks the job, gives the agent a name and a channel, and changes anything later. Agents answer customers, write daily reports, draft content, or handle everyday admin — in the browser and on Telegram. They remember the work and run schedules on their own. No servers, no API keys to start: Kilat AI is included, or bring your own model key.</p>
+<p>Templates include: Shop Assistant, Social Media Planner, Operations Reporter, General Assistant, Coder.</p>
+<h2>Flash agents sleep and wake in Jakarta</h2>
+<p>KilatBot agents run as Flash in Jakarta. A Flash agent sleeps when idle and wakes on demand. A change reaches an awake agent at once; a sleeping agent gets it when it next wakes — and a change never wakes it. A new agent costs nothing until it wakes. Reads that need the agent (a file, its schedules) wake it and answer <code>status: "waking"</code> with a retry time.</p>
+<h2>MCP quickstart</h2>
+<p>KilatBot's MCP endpoint lets a compatible AI client inspect your workspace and request a limited set of actions. Endpoint: <code>https://kilat.host/mcp</code>, stateless Streamable HTTP. Every request carries <code>Authorization: Bearer &lt;token&gt;</code>. Use a client that supports remote Streamable HTTP with custom authorization headers.</p>
+<h3>1. Create a read-only token</h3>
+<ol>
+<li>Sign in to KilatBot and open <strong>Account → MCP</strong> in the dashboard sidebar.</li>
+<li>Enter a client name, select <strong>Read only</strong>, leave Site publish and PocketBase management unchecked, and create the token.</li>
+<li>Save the one-time secret in a password manager or your client's secret store. Tokens expire after 30 days; revoke ones you no longer use.</li>
+</ol>
+<p>Use a separate token per client, and start read-only even if you plan to manage services later.</p>
+<h3>2. Connect a client</h3>
+<p>Generic configuration (adapt the secret reference to your client's documented secret store — never paste a real token into a file):</p>
+<pre><code>{
+  "mcpServers": {
+    "kilat": {
+      "type": "http",
+      "url": "https://kilat.host/mcp",
+      "headers": {
+        "Authorization": "Bearer &lt;client-specific secret reference&gt;"
+      }
+    }
+  }
+}</code></pre>
+<p>Claude Code (<code>.mcp.json</code> in your project, token from its launch environment):</p>
+<pre><code>{
+  "mcpServers": {
+    "kilat": {
+      "type": "http",
+      "url": "https://kilat.host/mcp",
+      "headers": { "Authorization": "Bearer ${KILAT_MCP_TOKEN}" }
+    }
+  }
+}</code></pre>
+<p>Then run <code>claude</code> from the token-bearing shell and check with <code>/mcp</code>.</p>
+<h3>3. Check the connection without changing anything</h3>
+<p>Start with: “Use KilatBot to list my services. Do not change anything.” Verify <code>list_apps</code> returns your workspace's services (an empty list is valid), then use the integer <code>app_id</code> from that result with <code>get_app</code>. Read tools include <code>list_templates</code>, <code>list_apps</code>, and <code>get_app</code>; lifecycle actions (<code>start_app</code>, <code>stop_app</code>, <code>restart_app</code>) need a manage token.</p>
+<p><strong>Security:</strong> treat a token like a password. Never commit tokens, paste them into assistant chats, or enable logs that expose authorization headers. Revoke a leaked token immediately.</p>
+<h2>Next steps</h2>
+<ul>
+<li><a href="https://kilat.host/docs/mcp">Live MCP reference on kilat.host/docs/mcp</a> — exact tools, arguments, and state rules.</li>
+<li><a href="https://kilat.host/pricing">Pricing</a> — current plans and rates.</li>
+<li><a href="https://kilat.host/?utm_source=github_pages&amp;utm_medium=referral&amp;utm_campaign=profile">kilat.host</a> — start from a template.</li>
+</ul>
+<footer>Operated by PT Kilat Inovasi Cerdas, Bogor, Indonesia. NIB 1910260001491. This page is a short hub; the live docs on kilat.host are canonical.</footer>
+</body>
+</html>
